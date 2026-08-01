@@ -142,6 +142,7 @@ python src/secom_xgb.py          # XGBoost + GridSearchCV 튜닝
 
 ## 더 읽기
 
+- ⭐ [프로젝트 결과 요약](docs/summary.md) — DMI(Defect·Metrology·Inspection) 관점 결과·발견 총정리
 - 📄 [상세 방법론](docs/methodology.md) — 결측·특성선택·불균형·평가의 원리
 - 🟢 [쉬운 설명](docs/easy-explanation.md) — 비전공자용 용어 풀이·비유
 - 🛠 [직접 해보기](docs/how-to-diy.md) — 도구 풀이 + 단계별 재현 가이드
