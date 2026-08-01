@@ -33,8 +33,8 @@
 - **Goal**: 대량 결측치(전체 4.5%·최대 센서 91%)와 극단적 불균형(불량 6.6%) 구조의 실제 반도체
   공정 데이터에서, 수율(Yield) 저하를 유발하는 유의미한 센서 변수를 선별하고, **양산 배포
   관점의 신뢰성**(시간축 안정성·비용 운영점·통계적 신뢰구간)까지 검증합니다.
-- **Target JD Alignment**: 삼성전자 메모리 공정기술 / SK하이닉스 양산기술 — 통계 분석 · 불량
-  예측 · SPC · 데이터 기반 의사결정 요건. (시각화는 Spotfire 트랙으로 확장 예정)
+- **Target JD Alignment**: **SK하이닉스 양산기술** — 양산 수율/품질 데이터 분석 · 불량 예측 ·
+  SPC 기반 공정 모니터링 · 데이터 기반 의사결정 요건. (시각화는 Spotfire 트랙으로 확장 예정)
 
 ## 2. Key Troubleshooting (실측 근거)
 
@@ -122,6 +122,19 @@ python src/secom_xgb.py          # XGBoost + GridSearchCV 튜닝
 - 공개 데이터이므로 저장소에 포함되어 있습니다(`public_data/secom/`).
 
 ---
+
+## 웹 데모
+
+- **정적 페이지**: [`web/index.html`](web/index.html) — 자체 완결형(외부 의존 없음), 라이트/다크
+  테마 대응 요약 페이지. 브라우저로 바로 열면 됩니다.
+- **자동 시연 영상**: Playwright 내장 녹화로 페이지를 스크롤·클릭하는 데모 영상을 만듭니다
+  (OBS 등 외부 녹화 프로그램 불필요).
+  ```bash
+  cd web
+  npm install -D playwright
+  npx playwright install chromium
+  node demo.js          # → results/demo/portfolio-demo.webm
+  ```
 
 ## 더 읽기
 
