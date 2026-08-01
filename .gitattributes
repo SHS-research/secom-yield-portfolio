@@ -1,0 +1,8 @@
+# 텍스트 파일 줄바꿈 정규화 (저장소는 LF로 통일, 체크아웃 시 OS에 맞춤)
+* text=auto eol=lf
+
+# 바이너리는 변환 금지
+*.png binary
+*.webm binary
+*.data binary
+*.xlsx binary
