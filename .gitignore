@@ -1,5 +1,6 @@
 # Node (Playwright demo)
 node_modules/
+results/demo/frames/
 
 # Python
 __pycache__/

@@ -4,6 +4,10 @@
 > 실제 반도체 라인 계측 데이터(1,567런 × 590센서)로 수율 불량을 예측하고, 대부분의 튜토리얼이
 > 놓치는 **정확도의 함정 · 모델 노후화 · 비용 기준 운영**을 수치로 규명한 포트폴리오입니다.
 
+<p align="center">
+  <img src="results/demo/portfolio-demo.gif" alt="SECOM 포트폴리오 데모" width="760">
+</p>
+
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-ML-F7931E?logo=scikitlearn&logoColor=white)
 ![XGBoost](https://img.shields.io/badge/XGBoost-tuned-006400)
