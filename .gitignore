@@ -1,0 +1,20 @@
+# Node (Playwright demo)
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 데이터는 공개 벤치마크라 포함함(재현성). 대용량 산출물만 제외하려면 아래 주석 해제
+# results/*.png
