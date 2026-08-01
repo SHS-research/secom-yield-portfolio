@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SECOM 반도체 수율 불량 예측</title>
+<style>
+  :root{
+    --paper:#eef2f5; --surface:#ffffff; --surface-2:#f6f8fa;
+    --ink:#161b22; --muted:#586170; --line:#d7dee5;
+    --steel:#2f6db0; --steel-ink:#1f5591; --steel-soft:#e4eef8;
+    --coral:#cf5a41; --good:#2f8f6b;
+    --mono:ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace;
+    --sans:"Apple SD Gothic Neo","Malgun Gothic","Segoe UI",system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --paper:#0d1016; --surface:#151a21; --surface-2:#1b2028;
+      --ink:#e7edf3; --muted:#98a3b0; --line:#28303a;
+      --steel:#5c9bd6; --steel-ink:#8fbde6; --steel-soft:#16283a;
+      --coral:#e07a60; --good:#54b892; }
+  }
+  :root[data-theme="dark"]{ --paper:#0d1016; --surface:#151a21; --surface-2:#1b2028;
+    --ink:#e7edf3; --muted:#98a3b0; --line:#28303a; --steel:#5c9bd6; --steel-ink:#8fbde6;
+    --steel-soft:#16283a; --coral:#e07a60; --good:#54b892; }
+  :root[data-theme="light"]{ --paper:#eef2f5; --surface:#ffffff; --surface-2:#f6f8fa;
+    --ink:#161b22; --muted:#586170; --line:#d7dee5; --steel:#2f6db0; --steel-ink:#1f5591;
+    --steel-soft:#e4eef8; --coral:#cf5a41; --good:#2f8f6b; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.65;}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 22px;}
+  h1,h2,h3{text-wrap:balance;line-height:1.2;margin:0;}
+  .mono{font-family:var(--mono);}
+  .num{font-family:var(--mono);font-variant-numeric:tabular-nums;}
+  .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--steel);font-weight:600;}
+  a{color:var(--steel-ink);text-decoration:none;}
+
+  nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--paper) 88%,transparent);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  nav .wrap{display:flex;align-items:center;gap:18px;height:54px;overflow-x:auto;}
+  nav .brand{font-family:var(--mono);font-weight:700;font-size:.88rem;white-space:nowrap;}
+  nav .brand b{color:var(--steel);}
+  nav a{font-size:.82rem;color:var(--muted);white-space:nowrap;}
+  nav a:hover{color:var(--ink);}
+  #theme-toggle{margin-left:auto;font-family:var(--mono);font-size:.76rem;cursor:pointer;
+    background:var(--surface);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:6px 12px;}
+  #theme-toggle:hover{border-color:var(--steel);}
+  #theme-toggle:focus-visible{outline:2px solid var(--steel-ink);outline-offset:2px;}
+
+  header.hero{border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--surface-2),var(--paper));}
+  .hero .wrap{padding:56px 22px 46px;}
+  .hero h1{font-size:clamp(1.8rem,4vw,2.9rem);font-weight:800;letter-spacing:-.02em;margin:12px 0 16px;}
+  .hero p{color:var(--ink);max-width:60ch;font-size:1.05rem;}
+  .hero .sub{color:var(--muted);font-size:.96rem;margin-top:12px;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;}
+  .chip{font-family:var(--mono);font-size:.74rem;padding:5px 11px;border:1px solid var(--line);
+    border-radius:999px;background:var(--surface);color:var(--muted);}
+  .chip b{color:var(--steel);}
+
+  section{padding:50px 0;border-bottom:1px solid var(--line);}
+  section > .wrap > .eyebrow{display:block;margin-bottom:10px;}
+  h2{font-size:clamp(1.4rem,2.4vw,1.9rem);font-weight:750;letter-spacing:-.01em;}
+  .lead{color:var(--muted);max-width:64ch;margin:10px 0 0;}
+
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:26px;}
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;border-top:3px solid var(--steel);}
+  .tile.warn{border-top-color:var(--coral);}
+  .tile.good{border-top-color:var(--good);}
+  .tile .big{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:700;font-size:1.9rem;line-height:1;}
+  .tile .lab{font-size:.82rem;color:var(--muted);margin-top:9px;}
+  .tile .lab b{color:var(--ink);}
+
+  .tbl-wrap{overflow-x:auto;margin-top:24px;border:1px solid var(--line);border-radius:12px;}
+  table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:520px;}
+  th,td{text-align:left;padding:11px 15px;border-bottom:1px solid var(--line);}
+  thead th{background:var(--surface-2);font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;
+    text-transform:uppercase;color:var(--muted);}
+  tbody tr:last-child td{border-bottom:none;}
+  td.was{color:var(--muted);}
+  td.now b{color:var(--steel-ink);}
+  td .res{font-family:var(--mono);color:var(--good);font-weight:600;}
+
+  .finds{display:grid;gap:12px;margin-top:24px;}
+  details{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--coral);
+    border-radius:0 12px 12px 0;padding:2px 20px;}
+  details[open]{border-color:var(--coral);}
+  summary{cursor:pointer;padding:16px 0;font-weight:650;list-style:none;display:flex;gap:10px;align-items:baseline;}
+  summary::-webkit-details-marker{display:none;}
+  summary .t{font-family:var(--mono);color:var(--coral);font-size:.78rem;font-weight:700;}
+  details p{margin:0 0 16px;color:var(--muted);font-size:.93rem;}
+
+  footer{padding:40px 0 56px;color:var(--muted);font-size:.86rem;}
+  footer code{font-family:var(--mono);background:var(--surface-2);padding:2px 6px;border-radius:5px;border:1px solid var(--line);color:var(--ink);}
+  @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <span class="brand">SECOM<b>·</b>YIELD</span>
+    <a href="#stats">핵심 수치</a>
+    <a href="#better">개선점</a>
+    <a href="#finds">발견</a>
+    <button id="theme-toggle" aria-label="테마 전환">◐ 테마</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">SK하이닉스 양산기술 지원 · 반도체 수율 데이터 분석</span>
+    <h1>“모델을 잘 만들었다”가 아니라<br>“공장에 쓰면 어떻게 되는가”까지.</h1>
+    <p>실제 반도체 라인 계측 데이터(1,567런 × 590센서)로 수율 불량을 예측하고,
+       대부분이 놓치는 <b>정확도의 함정·모델 노후화·비용 기준 운영</b>을 수치로 규명했습니다.</p>
+    <p class="sub">모든 수치는 재현 가능한 스크립트의 실측값입니다.</p>
+    <div class="chips">
+      <span class="chip"><b>1,567</b> 런</span>
+      <span class="chip"><b>590</b> 센서</span>
+      <span class="chip">불량률 <b>6.6%</b></span>
+      <span class="chip">3개월 시계열</span>
+      <span class="chip">UCI SECOM · 공개데이터</span>
+    </div>
+  </div>
+</header>
+
+<section id="stats">
+  <div class="wrap">
+    <span class="eyebrow">핵심 수치</span>
+    <h2>데이터마이닝으로 끄집어낸 결론</h2>
+    <div class="tiles">
+      <div class="tile warn"><div class="big">93.4%</div>
+        <div class="lab"><b>정확도의 함정</b> — 불량 6.6%라 “전부 합격”만 찍어도 나오는 가짜 성적</div></div>
+      <div class="tile"><div class="big">0.235</div>
+        <div class="lab"><b>PR-AUC</b> (95% CI 0.14–0.40) — 무작위 기준 0.066의 3.6배</div></div>
+      <div class="tile warn"><div class="big">0.21→0.06</div>
+        <div class="lab"><b>모델 노후화</b> — 시간순 검증 시 성능 붕괴 → 재학습 필요</div></div>
+      <div class="tile good"><div class="big">−38%</div>
+        <div class="lab"><b>비용 최적 운영점</b> — 임계값 0.5→0.08, 유출:과검=10:1</div></div>
+      <div class="tile"><div class="big">0.147→0.243</div>
+        <div class="lab"><b>XGBoost 튜닝</b> — GridSearchCV로 +0.097</div></div>
+      <div class="tile warn"><div class="big">0.03</div>
+        <div class="lab"><b>센서 랭킹 불안정</b> (Jaccard) — 전/후반 상위 20센서 겹침 1개</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="better">
+  <div class="wrap">
+    <span class="eyebrow">기존 대비 개선</span>
+    <h2>남들이 멈춘 지점에서 한 걸음 더</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>항목</th><th>보통의 방식</th><th>이 프로젝트</th><th>결과</th></tr></thead>
+        <tbody>
+          <tr><td>평가지표</td><td class="was">정확도</td><td class="now"><b>PR-AUC</b></td><td><span class="res">0.235 (3.6×)</span></td></tr>
+          <tr><td>검증</td><td class="was">무작위 분할</td><td class="now"><b>시간순 분할</b></td><td><span class="res">0.21→0.06</span> 붕괴</td></tr>
+          <tr><td>특성선택</td><td class="was">RF 중요도만</td><td class="now"><b>U검정+FDR 병행</b></td><td><span class="res">21/470</span> 유의</td></tr>
+          <tr><td>불균형</td><td class="was">SMOTE 관성</td><td class="now"><b>SMOTE 검증·기각</b></td><td><span class="res">−0.033</span></td></tr>
+          <tr><td>운영</td><td class="was">임계값 0.5</td><td class="now"><b>비용 운영점</b></td><td><span class="res">−38%</span></td></tr>
+          <tr><td>모델</td><td class="was">기본값</td><td class="now"><b>GridSearchCV</b></td><td><span class="res">+0.097</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="finds">
+  <div class="wrap">
+    <span class="eyebrow">쉬운 설명</span>
+    <h2>세 개의 핵심 발견</h2>
+    <div class="finds">
+      <details open><summary><span class="t">발견 1</span> “정확도 93%”는 함정이다</summary>
+        <p>불량이 6.6%뿐이라 아무 생각 없이 “전부 합격”이라 찍어도 정확도 93.4%가 나옵니다.
+           불량을 하나도 못 잡아도 높게 나오는 가짜 성적표라, 불량을 실제로 잡는지 재는 PR-AUC를 썼습니다.</p></details>
+      <details><summary><span class="t">발견 2</span> 모델은 시간이 지나면 낡는다</summary>
+        <p>데이터를 섞어 시험하면 좋지만, “과거로 배워 미래를 맞혀라”(실제 공장)로 시험하면 성능이 폭락합니다.
+           공정이 조금씩 변하므로 한 번 만든 모델을 계속 쓰면 안 되고 주기적으로 재학습해야 합니다.</p></details>
+      <details><summary><span class="t">발견 3</span> 정답률이 아니라 “비용”으로 판단한다</summary>
+        <p>반도체는 불량 하나를 놓치면 손해가 훨씬 큽니다. 합·불 기준선을 50%가 아니라 8%로 낮추니
+           전체 손해비용이 38% 줄었습니다. 공장이 실제로 쓰는 판단 방식입니다.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <strong style="color:var(--ink)">기술 스택</strong> ·
+    <code>Python</code> <code>pandas</code> <code>scikit-learn</code> <code>XGBoost</code>
+    <code>SciPy</code> <code>matplotlib</code> · 통계(부트스트랩·가설검정·SPC)
+    <p style="margin-top:16px">MIT © 2026 손훈석 (Hunseok Son) · SK하이닉스 양산기술 지원 포트폴리오</p>
+  </div>
+</footer>
+
+<script>
+  // 테마 토글: 뷰어 설정을 무시하고 명시적으로 light/dark 지정
+  (function(){
+    var btn = document.getElementById('theme-toggle');
+    var root = document.documentElement;
+    btn.addEventListener('click', function(){
+      var cur = root.dataset.theme;
+      if(!cur){ // 최초 클릭: 현재 표시 테마의 반대로
+        cur = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      root.dataset.theme = (cur === 'dark') ? 'light' : 'dark';
+    });
+  })();
+</script>
+</body>
+</html>

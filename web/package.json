@@ -1,0 +1,12 @@
+{
+  "name": "secom-yield-portfolio-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SECOM 포트폴리오 웹페이지 + Playwright 데모 녹화",
+  "scripts": {
+    "demo": "node demo.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.1"
+  }
+}
