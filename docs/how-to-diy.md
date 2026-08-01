@@ -133,12 +133,14 @@ PR-AUC를 봐야 함.
 
 | 하고 싶은 것 | 실행 명령 | 나오는 결과 |
 |---|---|---|
-| 데이터 살펴보기(분포·검정) | `python secom_eda.py` | 히스토그램·박스플롯·통계랭킹 그림 4장 |
-| 기본 예측 모델·성적 | `python secom_analysis.py` | PR-AUC, 상위센서, 그림 3장 |
-| 시간순 검증·SPC 관리도 | `python secom_drift.py` | 드리프트 증거, 그림 3장 |
-| 비용운영점·SMOTE 검증 | `python secom_advanced.py` | 비용 38%절감, 그림 3장 |
+| 데이터 살펴보기(분포·검정) | `python src/secom_eda.py` | 히스토그램·박스플롯·통계랭킹 그림 4장 |
+| 기본 예측 모델·성적 | `python src/secom_analysis.py` | PR-AUC, 상위센서, 그림 3장 |
+| 시간순 검증·SPC 관리도 | `python src/secom_drift.py` | 드리프트 증거, 그림 3장 |
+| 비용운영점·SMOTE 검증 | `python src/secom_advanced.py` | 비용 38%절감, 그림 3장 |
+| 신뢰구간(부트스트랩) | `python src/secom_ci.py` | PR-AUC·불량률 변화 95% CI |
+| XGBoost 튜닝 | `python src/secom_xgb.py` | GridSearchCV 최적 파라미터·PR-AUC |
 
-> 모든 그림은 `analysis_result_plot/` 폴더에 저장된다. 순서대로 실행하면 내가 한 분석 전체가 재현된다.
+> 모든 그림은 `results/` 폴더에 저장된다. 레포 루트에서 실행하며, 순서대로 돌리면 분석 전체가 재현된다.
 
 ---
 
