@@ -84,6 +84,27 @@
 
 ---
 
+## Spotfire-style 시각화 (Python 재현)
+
+> 양산 현업 도구 **Spotfire의 대표 차트 유형**(Box·Scatter Matrix·Treemap·파라미터 매핑)을
+> SECOM 실데이터로 재현. **실제 Spotfire `.dxp`가 아닌 Python(matplotlib) 재현**이며, SECOM엔
+> 설비/공정 컬럼이 없어 pass/fail·센서 통계로 정직하게 대체함
+> → 자세한 설명: [docs/spotfire-style-viz.md](docs/spotfire-style-viz.md)
+
+| Box Plot — 상위 센서 pass vs fail | Scatter Plot Matrix — 상위 4센서 |
+|---|---|
+| ![box](results/secom_spotfire_box.png) | ![matrix](results/secom_spotfire_scatter_matrix.png) |
+
+| Treemap — 센서 통계영향 | Parameter-map — X=시간, color=pass/fail |
+|---|---|
+| ![treemap](results/secom_spotfire_treemap.png) | ![parammap](results/secom_spotfire_parammap.png) |
+
+```bash
+python src/secom_spotfire_style.py   # → results/secom_spotfire_*.png
+```
+
+---
+
 ## 빠른 시작 (재현)
 
 ```bash
